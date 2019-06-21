@@ -1,49 +1,43 @@
+console.log('Begin demo...');
+
 var Gate = require('./gate');
 
 var gate = new Gate.Gate(
-    ['time','request','safe','ready'],
+    ['random', 'time'],
     true //it's locked to start
 ); 
 
 gate.on('unlocked', function() {
-    //Send the cycle valve command
-    cycleValve();
-
-    //re-lock the user request lock
-    gate.lock('request',true);
-
-    //re-lock the ready lock
-    gate.lock('ready', true);
-
-    //Start a time delay and lock the 'time' lock
+    console.log('\r\n----GATE UNLOCKED!----\r\n');    
     gate.lock('time', true);
-    setTimeout(function() {
-        gate.lock('time', false); //after 10 mins the time lock is unlocked
-    }, 10000);
+    gate.lock('random', true);
 });
 
-//Imagine the following functions:
+gate.on('locked', function() {
+    console.log('gate locked...');
+});
 
-function listenForUserRequest() {
-    //since a user requested an update, unlock the request lock
-    gate.lock('request', false); 
-}
-
-function listenForSafeState(safe) {
-    if (safe) {
-        //the valve has notified us that it's safe to operate
-        gate.lock('safe', false); 
-    } else {
-        //not safe to operate, lock the "safe" lock
-        gate.lock('safe', true); 
+//every 3 seconds unlock the time gate
+setInterval(function() {
+    //check for the status of the time gate and only unlock if locked
+    if (gate.state().locks.time === true) {
+        console.log('...unlocking time...');
+        gate.lock('time', false);
     }
-}
+    console.log('Current State: \r\n' + JSON.stringify(gate.state().locks));
+    
+}, 3000);
 
-function listenForCycleComplete() {
-    //the update is complete so unlock the ready lock    
-    gate.lock('ready', false); 
-}
-
-function cycleValve() {
-    //send the command to cycle the valve
-}
+//every 1 seconds randomly lock/unlock the random gate
+setInterval(function() {
+    var random =Math.random();
+    if (random >= 0.5) {
+        gate.lock('random', true);
+           
+    } else {
+        if (gate.state().locks.random === true) {
+            console.log('...unlocking random...'); 
+            gate.lock('random', false);
+        }
+    }
+}, 1000);

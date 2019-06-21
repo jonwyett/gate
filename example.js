@@ -1,13 +1,13 @@
 var Gate = require('./gate');
 
 var gate = new Gate.Gate(
-    ['time','request','online','ready'],
+    ['time','request','safe','ready'],
     true
 ); //it's locked to start
 
 gate.on('unlocked', function() {
-    //Send the update to the remote system
-    updateRemoteSystem();
+    //Send the cycle valve command
+    cycleValve();
 
     //re-lock the user request lock
     gate.lock('request',true);
@@ -18,32 +18,32 @@ gate.on('unlocked', function() {
     //Start a time delay and lock the 'time' lock
     gate.lock('time', true);
     setTimeout(function() {
-        gate.lock('time', false); //after 60 secs the time lock is unlocked
-    }, 6000);
+        gate.lock('time', false); //after 10 mins the time lock is unlocked
+    }, 10000);
 });
 
 //Imagine the following functions:
 
-//function listenForUserRequest() {
+function listenForUserRequest() {
     //since a user requested an update, unlock the request lock
     gate.lock('request', false); 
-// }
+}
 
-//function listenForHeartBeat() {
-    if (true) {
-        //we heard a heartbeat, so unlock that lock
-        gate.lock('online', false); 
+function listenForSafeState(safe) {
+    if (safe) {
+        //the valve has notified us that it's safe to operate
+        gate.lock('safe', false); 
     } else {
-        //no heartbeat, remote system offline, lock it.
-        gate.lock('online', true); 
+        //not safe to operate, lock the "safe" lock
+        gate.lock('safe', true); 
     }
-//}
+}
 
-//function listenForUpdateComplete() {
-//the update is complete so unlock the ready lock    
+function listenForCycleComplete() {
+    //the update is complete so unlock the ready lock    
     gate.lock('ready', false); 
-//}
+}
 
-//function updateRemoteSystem() {
-    //update the remote system
-//}
+function cycleValve() {
+    //send the command to cycle the valve
+}

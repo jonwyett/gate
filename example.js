@@ -2,8 +2,8 @@ var Gate = require('./gate');
 
 var gate = new Gate.Gate(
     ['time','request','safe','ready'],
-    true
-); //it's locked to start
+    true //it's locked to start
+); 
 
 gate.on('unlocked', function() {
     //Send the cycle valve command

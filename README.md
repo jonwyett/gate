@@ -22,8 +22,8 @@ var Gate = require('./gate');
 
 var gate = new Gate.Gate(
     ['time','request','safe','ready'],
-    true
-); //it's locked to start
+    true //it's locked to start
+); 
 
 gate.on('unlocked', function() {
     //Send the cycle valve command
@@ -68,6 +68,47 @@ function cycleValve() {
     //send the command to cycle the valve
 }
 ```
+
+It might actually make more sense to reverse the lock states in this example and listen for 
+```
+gate.on('locked');
+```
+because then you would be writing things like:
+```
+function theValveIsReady() {
+    gate.lock('ready',true);
+}
+```
+instead of:
+```
+function theValveIsReady() {
+    gate.lock('ready',false); //false? that's confusing!
+}
+```
+
+and it makes more logical sense to think in terms of ready=true meaning it's ready but that's not how the paradigm was imagined. 
+
+You could in theory rename your locks:
+```
+var oldNames = ['time','request','safe','ready']
+
+var newNames = ['wait','noRequest','notSafe,'notReady']
+```
+
+and then gate.state() would return something like:
+```
+{
+    wait: true, //not enough time has passed
+    noRequest: false, //there was in fact a request, so this is false
+    notSafe: true, //it's not in a safe state
+    notReady: false //the valve has completed it's last cycle and is ready
+}
+```
+
+looking at that output it's easy to see that we need to wait until wait=false and notSafe=false before sending the cycle command.
+
+This is all just convention and semantics though... either way it has the same effect.
+
 
 
 

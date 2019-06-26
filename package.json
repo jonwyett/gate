@@ -1,0 +1,23 @@
+{
+  "name": "jw-gate",
+  "version": "1.0.0",
+  "description": "Creates a \"gate\" with \"locks.\" When all locks are open, the gate is open, useful for dealing with semi-random async events.",
+  "main": "gate.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/jonwyett/jw-gate.git"
+  },
+  "keywords": [
+    "gate",
+    "async"
+  ],
+  "author": "Jonathan Wyett",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/jonwyett/jw-gate/issues"
+  },
+  "homepage": "https://github.com/jonwyett/jw-gate#readme"
+}
